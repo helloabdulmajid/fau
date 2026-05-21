@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface OfferRepository extends JpaRepository<Offer, Long> {
 
-    List<Offer> findByMerchant_NameContainingIgnoreCaseOrCategory_NameContainingIgnoreCase(
+    List<Offer> findByMerchant_NameContainingIgnoreCaseOrCategory_NameContainingIgnoreCaseOrderByValueDesc(
             String merchant,
             String category
     );

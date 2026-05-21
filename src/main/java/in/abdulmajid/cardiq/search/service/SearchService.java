@@ -16,7 +16,7 @@ public class SearchService {
     public List<SearchCardResponse> search(String keyword) {
 
         return offerRepository
-                .findByMerchant_NameContainingIgnoreCaseOrCategory_NameContainingIgnoreCase(
+                .findByMerchant_NameContainingIgnoreCaseOrCategory_NameContainingIgnoreCaseOrderByValueDesc(
                         keyword,
                         keyword
                 )

@@ -41,6 +41,11 @@ public class DataInitializer {
 
             bankRepository.save(sbi);
 
+            Bank axis = new Bank();
+            axis.setName("Axis");
+
+            bankRepository.save(axis);
+
             Category shopping = new Category();
             shopping.setName("Shopping");
 
@@ -65,6 +70,50 @@ public class DataInitializer {
             cashbackCard.setBank(sbi);
 
             cardRepository.save(cashbackCard);
+
+            Card axisAce = new Card();
+
+            axisAce.setName("Axis Ace");
+
+            axisAce.setJoiningFee(499.0);
+            axisAce.setAnnualFee(499.0);
+
+            axisAce.setCardType(CardType.CREDIT);
+            axisAce.setNetwork(CardNetwork.MASTERCARD);
+            axisAce.setRewardType(RewardType.CASHBACK);
+            axisAce.setCardLevel(CardLevel.ENTRY);
+
+            axisAce.setBank(axis);
+
+            cardRepository.save(axisAce);
+
+            Offer axisOffer = new Offer();
+
+            axisOffer.setTitle("2% Cashback on Amazon");
+
+            axisOffer.setDescription("Get 2% cashback on Amazon purchases.");
+
+            axisOffer.setOfferType(OfferType.CASHBACK);
+
+            axisOffer.setValue(2.0);
+
+            axisOffer.setMaxBenefit(1000.0);
+
+            axisOffer.setMinimumSpend(500.0);
+
+            axisOffer.setStartDate(LocalDate.now());
+
+            axisOffer.setEndDate(LocalDate.now().plusMonths(3));
+
+            axisOffer.setVerifiedAt(LocalDate.now());
+
+            axisOffer.setCard(axisAce);
+
+            axisOffer.setMerchant(amazon);
+
+            axisOffer.setCategory(shopping);
+
+            offerRepository.save(axisOffer);
 
             Offer amazonOffer = new Offer();
 
