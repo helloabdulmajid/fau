@@ -55,4 +55,9 @@ public class CreateCardRequest {
     private Integer rewardRate;
 
     private String description;
+    private Boolean active = true;
+
+    private String coBrandPartner;
+
+    private String imageUrl;
 }

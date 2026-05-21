@@ -6,7 +6,9 @@ import in.abdulmajid.cardiq.card.dto.CardResponse;
 import in.abdulmajid.cardiq.card.dto.CreateCardRequest;
 import in.abdulmajid.cardiq.card.entity.Card;
 import in.abdulmajid.cardiq.card.repository.CardRepository;
+import in.abdulmajid.cardiq.exception.DuplicateResourceException;
 import in.abdulmajid.cardiq.exception.ResourceNotFoundException;
+import in.abdulmajid.cardiq.offer.repository.OfferRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,32 +20,15 @@ public class CardService {
 
     private final CardRepository cardRepository;
     private final BankRepository bankRepository;
+    private final OfferRepository offerRepository;
 
-    public List<CardResponse> getAllCards() {
+    public CardResponse createCard(
+            CreateCardRequest request
+    ) {
 
-        return cardRepository.findAll()
-                .stream()
-                .map(card -> CardResponse.builder()
-                        .id(card.getId())
-                        .name(card.getName())
-                        .bankName(card.getBank().getName())
-                        .network(card.getNetwork())
-                        .cardType(card.getCardType())
-                        .rewardType(card.getRewardType())
-                        .cardLevel(card.getCardLevel())
-                        .joiningFee(card.getJoiningFee())
-                        .annualFee(card.getAnnualFee())
-                        .ltf(card.getLtf())
-                        .airportLoungeAccess(card.getAirportLoungeAccess())
-                        .railwayLoungeAccess(card.getRailwayLoungeAccess())
-                        .fuelSurchargeWaiver(card.getFuelSurchargeWaiver())
-                        .coBranded(card.getCoBranded())
-                        .description(card.getDescription())
-                        .build())
-                .toList();
-    }
-
-    public CardResponse createCard(CreateCardRequest request) {
+        if (cardRepository.existsByNameIgnoreCase(request.getName())) {
+            throw new DuplicateResourceException("Card already exists");
+        }
 
         Bank bank = bankRepository.findById(request.getBankId())
                 .orElseThrow(() ->
@@ -52,38 +37,172 @@ public class CardService {
 
         Card card = new Card();
 
-        card.setName(request.getName());
-        card.setJoiningFee(request.getJoiningFee());
-        card.setAnnualFee(request.getAnnualFee());
-
-        card.setNetwork(request.getNetwork());
-        card.setCardType(request.getCardType());
-        card.setRewardType(request.getRewardType());
-        card.setCardLevel(request.getCardLevel());
+        mapRequestToEntity(card, request);
 
         card.setBank(bank);
 
         Card savedCard = cardRepository.save(card);
 
-        return CardResponse.builder()
-                .id(savedCard.getId())
-                .name(savedCard.getName())
-                .bankName(savedCard.getBank().getName())
-                .network(savedCard.getNetwork())
-                .cardType(savedCard.getCardType())
-                .rewardType(savedCard.getRewardType())
-                .cardLevel(savedCard.getCardLevel())
-                .joiningFee(savedCard.getJoiningFee())
-                .annualFee(savedCard.getAnnualFee())
-                .ltf(savedCard.getLtf())
-                .airportLoungeAccess(savedCard.getAirportLoungeAccess())
-                .railwayLoungeAccess(savedCard.getRailwayLoungeAccess())
-                .fuelSurchargeWaiver(savedCard.getFuelSurchargeWaiver())
-                .coBranded(savedCard.getCoBranded())
-                .description(savedCard.getDescription())
-                .build();
+        return mapToResponse(savedCard);
     }
 
+    public List<CardResponse> getAllCards() {
 
+        return cardRepository.findAll()
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
 
+    public CardResponse getCardById(Long id) {
+
+        Card card = cardRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Card not found")
+                );
+
+        return mapToResponse(card);
+    }
+
+    public CardResponse updateCard(
+            Long id,
+            CreateCardRequest request
+    ) {
+
+        Card card = cardRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Card not found")
+                );
+
+        Bank bank = bankRepository.findById(request.getBankId())
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Bank not found")
+                );
+
+        mapRequestToEntity(card, request);
+
+        card.setBank(bank);
+
+        Card updatedCard = cardRepository.save(card);
+
+        return mapToResponse(updatedCard);
+    }
+
+    public void deleteCard(Long id) {
+
+        Card card = cardRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Card not found")
+                );
+
+        if (offerRepository.existsByCard_Id(id)) {
+            throw new DuplicateResourceException(
+                    "Cannot delete card because offers are associated with it"
+            );
+        }
+
+        cardRepository.delete(card);
+    }
+
+    private void mapRequestToEntity(
+            Card card,
+            CreateCardRequest request
+    ) {
+
+        card.setName(request.getName());
+
+        card.setJoiningFee(request.getJoiningFee());
+
+        card.setAnnualFee(request.getAnnualFee());
+
+        card.setNetwork(request.getNetwork());
+
+        card.setCardType(request.getCardType());
+
+        card.setRewardType(request.getRewardType());
+
+        card.setCardLevel(request.getCardLevel());
+
+        card.setLtf(request.getLtf());
+
+        card.setAirportLoungeAccess(
+                request.getAirportLoungeAccess()
+        );
+
+        card.setRailwayLoungeAccess(
+                request.getRailwayLoungeAccess()
+        );
+
+        card.setFuelSurchargeWaiver(
+                request.getFuelSurchargeWaiver()
+        );
+
+        card.setCoBranded(
+                request.getCoBranded()
+        );
+
+        card.setEmiAvailable(
+                request.getEmiAvailable()
+        );
+
+        card.setRewardRate(
+                request.getRewardRate()
+        );
+
+        card.setDescription(
+                request.getDescription()
+        );
+        card.setActive(
+                request.getActive()
+        );
+
+        card.setCoBrandPartner(
+                request.getCoBrandPartner()
+        );
+
+        card.setImageUrl(
+                request.getImageUrl()
+        );
+    }
+
+    private CardResponse mapToResponse(
+            Card card
+    ) {
+
+        return CardResponse.builder()
+                .id(card.getId())
+                .name(card.getName())
+                .bankName(card.getBank().getName())
+                .network(card.getNetwork())
+                .cardType(card.getCardType())
+                .rewardType(card.getRewardType())
+                .cardLevel(card.getCardLevel())
+                .joiningFee(card.getJoiningFee())
+                .annualFee(card.getAnnualFee())
+                .ltf(card.getLtf())
+                .airportLoungeAccess(
+                        card.getAirportLoungeAccess()
+                )
+                .railwayLoungeAccess(
+                        card.getRailwayLoungeAccess()
+                )
+                .fuelSurchargeWaiver(
+                        card.getFuelSurchargeWaiver()
+                )
+                .coBranded(card.getCoBranded())
+                .emiAvailable(card.getEmiAvailable())
+                .rewardRate(card.getRewardRate())
+                .description(card.getDescription())
+                .active(card.getActive())
+
+                .coBrandPartner(
+                        card.getCoBrandPartner()
+                )
+
+                .imageUrl(
+                        card.getImageUrl()
+                )
+
+                .build();
+    }
 }

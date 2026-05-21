@@ -39,5 +39,15 @@ public class CardResponse {
 
     private Boolean coBranded;
 
+    private Boolean emiAvailable;
+
+    private Integer rewardRate;
+
     private String description;
+
+    private Boolean active;
+
+    private String coBrandPartner;
+
+    private String imageUrl;
 }

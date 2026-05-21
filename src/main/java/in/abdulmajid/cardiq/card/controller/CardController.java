@@ -2,7 +2,6 @@ package in.abdulmajid.cardiq.card.controller;
 
 import in.abdulmajid.cardiq.card.dto.CardResponse;
 import in.abdulmajid.cardiq.card.dto.CreateCardRequest;
-import in.abdulmajid.cardiq.card.entity.Card;
 import in.abdulmajid.cardiq.card.service.CardService;
 import in.abdulmajid.cardiq.common.ApiResponse;
 import jakarta.validation.Valid;
@@ -18,11 +17,6 @@ public class CardController {
 
     private final CardService cardService;
 
-    @GetMapping
-    List<CardResponse> getAllCards() {
-        return cardService.getAllCards();
-    }
-
     @PostMapping
     public ApiResponse<CardResponse> createCard(
             @Valid @RequestBody CreateCardRequest request
@@ -32,6 +26,55 @@ public class CardController {
                 .success(true)
                 .message("Card created successfully")
                 .data(cardService.createCard(request))
+                .build();
+    }
+
+    @GetMapping
+    public ApiResponse<List<CardResponse>> getAllCards() {
+
+        return ApiResponse.<List<CardResponse>>builder()
+                .success(true)
+                .message("Cards fetched successfully")
+                .data(cardService.getAllCards())
+                .build();
+    }
+
+    @GetMapping("/{id}")
+    public ApiResponse<CardResponse> getCardById(
+            @PathVariable Long id
+    ) {
+
+        return ApiResponse.<CardResponse>builder()
+                .success(true)
+                .message("Card fetched successfully")
+                .data(cardService.getCardById(id))
+                .build();
+    }
+
+    @PutMapping("/{id}")
+    public ApiResponse<CardResponse> updateCard(
+            @PathVariable Long id,
+            @Valid @RequestBody CreateCardRequest request
+    ) {
+
+        return ApiResponse.<CardResponse>builder()
+                .success(true)
+                .message("Card updated successfully")
+                .data(cardService.updateCard(id, request))
+                .build();
+    }
+
+    @DeleteMapping("/{id}")
+    public ApiResponse<Void> deleteCard(
+            @PathVariable Long id
+    ) {
+
+        cardService.deleteCard(id);
+
+        return ApiResponse.<Void>builder()
+                .success(true)
+                .message("Card deleted successfully")
+                .data(null)
                 .build();
     }
 }
