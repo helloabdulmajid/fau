@@ -1,5 +1,6 @@
 package in.abdulmajid.cardiq.search.service;
 
+import in.abdulmajid.cardiq.exception.ResourceNotFoundException;
 import in.abdulmajid.cardiq.offer.repository.OfferRepository;
 import in.abdulmajid.cardiq.search.dto.SearchCardResponse;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +16,7 @@ public class SearchService {
 
     public List<SearchCardResponse> search(String keyword) {
 
-        return offerRepository
+        List<SearchCardResponse> results = offerRepository
                 .findByMerchant_NameContainingIgnoreCaseOrCategory_NameContainingIgnoreCaseOrderByValueDesc(
                         keyword,
                         keyword
@@ -31,5 +32,11 @@ public class SearchService {
                         .categoryName(offer.getCategory().getName())
                         .build())
                 .toList();
+
+        if (results.isEmpty()) {
+            throw new ResourceNotFoundException("No offers found");
+        }
+
+        return results;
     }
 }
