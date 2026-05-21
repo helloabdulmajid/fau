@@ -1,5 +1,6 @@
 package in.abdulmajid.cardiq.search.controller;
 
+import in.abdulmajid.cardiq.common.ApiResponse;
 import in.abdulmajid.cardiq.search.dto.SearchCardResponse;
 import in.abdulmajid.cardiq.search.service.SearchService;
 import lombok.RequiredArgsConstructor;
@@ -18,9 +19,14 @@ public class SearchController {
     private final SearchService searchService;
 
     @GetMapping
-    public List<SearchCardResponse> search(
+    public ApiResponse<List<SearchCardResponse>> search(
             @RequestParam String keyword
     ) {
-        return searchService.search(keyword);
+
+        return ApiResponse.<List<SearchCardResponse>>builder()
+                .success(true)
+                .message("Search results fetched successfully")
+                .data(searchService.search(keyword))
+                .build();
     }
 }
