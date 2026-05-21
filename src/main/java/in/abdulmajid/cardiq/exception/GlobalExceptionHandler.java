@@ -72,4 +72,20 @@ public class GlobalExceptionHandler {
                 .badRequest()
                 .body(response);
     }
+
+    @ExceptionHandler(DuplicateResourceException.class)
+    public ResponseEntity<ApiResponse<Void>> handleDuplicateResource(
+            DuplicateResourceException ex
+    ) {
+
+        ApiResponse<Void> response = ApiResponse.<Void>builder()
+                .success(false)
+                .message(ex.getMessage())
+                .data(null)
+                .build();
+
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(response);
+    }
 }

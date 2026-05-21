@@ -38,4 +38,43 @@ public class BankController {
                 .data(bankService.getAllBanks())
                 .build();
     }
+
+    @GetMapping("/{id}")
+    public ApiResponse<BankResponse> getBankById(
+            @PathVariable Long id
+    ) {
+
+        return ApiResponse.<BankResponse>builder()
+                .success(true)
+                .message("Bank fetched successfully")
+                .data(bankService.getBankById(id))
+                .build();
+    }
+
+    @PutMapping("/{id}")
+    public ApiResponse<BankResponse> updateBank(
+            @PathVariable Long id,
+            @Valid @RequestBody CreateBankRequest request
+    ) {
+
+        return ApiResponse.<BankResponse>builder()
+                .success(true)
+                .message("Bank updated successfully")
+                .data(bankService.updateBank(id, request))
+                .build();
+    }
+
+    @DeleteMapping("/{id}")
+    public ApiResponse<Void> deleteBank(
+            @PathVariable Long id
+    ) {
+
+        bankService.deleteBank(id);
+
+        return ApiResponse.<Void>builder()
+                .success(true)
+                .message("Bank deleted successfully")
+                .data(null)
+                .build();
+    }
 }
