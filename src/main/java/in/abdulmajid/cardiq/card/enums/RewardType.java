@@ -4,5 +4,6 @@ public enum RewardType {
     CASHBACK,
     REWARD_POINTS,
     MILES,
-    MIXED
+    MIXED,
+    AIR_MILES
 }

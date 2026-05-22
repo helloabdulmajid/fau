@@ -75,6 +75,22 @@ public class SearchService {
                                     matched = true;
                                 }
 
+                                /*
+                                 * Match merchant description
+                                 */
+
+                                if (!matched &&
+                                        offer.getMerchant() != null &&
+                                        offer.getMerchant()
+                                                .getDescription() != null &&
+                                        offer.getMerchant()
+                                                .getDescription()
+                                                .toLowerCase()
+                                                .contains(word)) {
+
+                                    matched = true;
+                                }
+
 
                                 /*
                                  * Match category name
@@ -133,6 +149,21 @@ public class SearchService {
                                                 .getNetwork() != null &&
                                         offer.getCard()
                                                 .getNetwork()
+                                                .name()
+                                                .toLowerCase()
+                                                .contains(word)) {
+
+                                    matched = true;
+                                }
+
+                                /*
+                                 * Match benefit type
+                                 */
+
+                                if (!matched &&
+                                        offer.getBenefitRule() != null &&
+                                        offer.getBenefitRule()
+                                                .getBenefitType()
                                                 .name()
                                                 .toLowerCase()
                                                 .contains(word)) {

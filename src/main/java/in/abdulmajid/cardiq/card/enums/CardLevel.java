@@ -4,6 +4,10 @@ public enum CardLevel {
     ENTRY,
     MID_RANGE,
             PREMIUM,
-    SUPER_PREMIUM
+    SUPER_PREMIUM,
+    PLATINUM,
+    GOLD,
+    CLASSIC,
+    SIGNATURE
 }
 

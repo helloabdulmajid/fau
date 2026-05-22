@@ -18,10 +18,10 @@ import org.springframework.context.annotation.Configuration;
 
 import java.time.LocalDate;
 
-@Configuration
+//@Configuration
 public class DataInitializer {
 
-    @Bean
+ //   @Bean
     CommandLineRunner initData(
             BankRepository bankRepository,
             CardRepository cardRepository,

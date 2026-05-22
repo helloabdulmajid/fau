@@ -8,5 +8,6 @@ public enum OfferType {
     REWARD_POINTS,
     MILES,
     EMI,
-    SURCHARGE_WAIVER
+    SURCHARGE_WAIVER,
+    TRAVEL
 }

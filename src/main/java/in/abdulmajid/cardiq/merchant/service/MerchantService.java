@@ -32,6 +32,8 @@ public class MerchantService {
         merchant.setName(request.getName());
         merchant.setLogoUrl(request.getLogoUrl());
         merchant.setWebsiteUrl(request.getWebsiteUrl());
+        merchant.setDescription(request.getDescription());
+        merchant.setActive(request.getActive());
 
         Merchant savedMerchant = merchantRepository.save(merchant);
 
@@ -69,6 +71,8 @@ public class MerchantService {
         merchant.setName(request.getName());
         merchant.setLogoUrl(request.getLogoUrl());
         merchant.setWebsiteUrl(request.getWebsiteUrl());
+        merchant.setDescription(request.getDescription());
+        merchant.setActive(request.getActive());
 
         Merchant updatedMerchant = merchantRepository.save(merchant);
 
@@ -101,6 +105,8 @@ public class MerchantService {
                 .name(merchant.getName())
                 .logoUrl(merchant.getLogoUrl())
                 .websiteUrl(merchant.getWebsiteUrl())
+                .active(merchant.getActive())
+                .description(merchant.getDescription())
                 .build();
     }
 }
