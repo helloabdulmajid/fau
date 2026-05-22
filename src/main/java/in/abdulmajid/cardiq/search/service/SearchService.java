@@ -29,16 +29,132 @@ public class SearchService {
             );
         }
 
+        List<String> keywords =
+                List.of(
+                        keyword
+                                .toLowerCase()
+                                .split("\\s+")
+                );
+
         List<SearchCardResponse> results =
                 offerRepository
-                        .findDistinctByTitleContainingIgnoreCaseOrMerchant_NameContainingIgnoreCaseOrCategory_NameContainingIgnoreCaseOrCard_NameContainingIgnoreCaseOrCard_Bank_NameContainingIgnoreCase(
-                                keyword,
-                                keyword,
-                                keyword,
-                                keyword,
-                                keyword
-                        )
+                        .findByActiveTrue()
                         .stream()
+
+                        .filter(offer -> {
+
+                            for (String word : keywords) {
+
+                                boolean matched = false;
+
+
+                                /*
+                                 * Match offer title
+                                 */
+
+                                if (offer.getTitle() != null &&
+                                        offer.getTitle()
+                                                .toLowerCase()
+                                                .contains(word)) {
+
+                                    matched = true;
+                                }
+
+
+                                /*
+                                 * Match merchant name
+                                 */
+
+                                if (!matched &&
+                                        offer.getMerchant() != null &&
+                                        offer.getMerchant()
+                                                .getName()
+                                                .toLowerCase()
+                                                .contains(word)) {
+
+                                    matched = true;
+                                }
+
+
+                                /*
+                                 * Match category name
+                                 */
+
+                                if (!matched &&
+                                        offer.getCategory() != null &&
+                                        offer.getCategory()
+                                                .getName()
+                                                .toLowerCase()
+                                                .contains(word)) {
+
+                                    matched = true;
+                                }
+
+
+                                /*
+                                 * Match bank name
+                                 */
+
+                                if (!matched &&
+                                        offer.getCard() != null &&
+                                        offer.getCard()
+                                                .getBank()
+                                                .getName()
+                                                .toLowerCase()
+                                                .contains(word)) {
+
+                                    matched = true;
+                                }
+
+
+                                /*
+                                 * Match card network
+                                 */
+
+                                if (!matched &&
+                                        offer.getCard() != null &&
+                                        offer.getCard()
+                                                .getNetwork()
+                                                .name()
+                                                .toLowerCase()
+                                                .contains(word)) {
+
+                                    matched = true;
+                                }
+
+
+                                /*
+                                 * Match reward type
+                                 */
+
+                                if (!matched &&
+                                        offer.getCard() != null &&
+                                        offer.getCard()
+                                                .getNetwork() != null &&
+                                        offer.getCard()
+                                                .getNetwork()
+                                                .name()
+                                                .toLowerCase()
+                                                .contains(word)) {
+
+                                    matched = true;
+                                }
+
+
+                                /*
+                                 * If one keyword does not match,
+                                 * reject this offer
+                                 */
+
+                                if (!matched) {
+
+                                    return false;
+                                }
+                            }
+
+                            return true;
+                        })
+
                         .map(offer -> {
 
                             /*

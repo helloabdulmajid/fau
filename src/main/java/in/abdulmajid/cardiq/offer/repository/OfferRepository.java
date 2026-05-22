@@ -48,4 +48,6 @@ public interface OfferRepository extends JpaRepository<Offer, Long> {
     boolean existsByBenefitRule(
             BenefitRule benefitRule
     );
+
+    List<Offer> findByActiveTrue();
 }
