@@ -22,12 +22,28 @@ public class SearchService {
             Double amount
     ) {
 
+        /*
+         * Validate search keyword
+         */
+
         if (keyword == null || keyword.isBlank()) {
 
             throw new ResourceNotFoundException(
                     "Search keyword is required"
             );
         }
+
+
+        /*
+         * Split keywords
+         *
+         * Example:
+         * "amazon cashback"
+         *
+         * becomes:
+         *
+         * ["amazon", "cashback"]
+         */
 
         List<String> keywords =
                 List.of(
@@ -36,12 +52,35 @@ public class SearchService {
                                 .split("\\s+")
                 );
 
+
+        /*
+         * Fetch all active offers
+         */
+
         List<SearchCardResponse> results =
                 offerRepository
                         .findByActiveTrue()
                         .stream()
 
-                        .filter(offer -> {
+                        .map(offer -> {
+
+                            /*
+                             * Relevance score
+                             *
+                             * Measures:
+                             * how closely offer matches
+                             * user search intent
+                             */
+
+                            int relevanceScore = 0;
+
+
+                            /*
+                             * Validate keyword matching
+                             *
+                             * All keywords must match
+                             * somewhere
+                             */
 
                             for (String word : keywords) {
 
@@ -58,6 +97,8 @@ public class SearchService {
                                                 .contains(word)) {
 
                                     matched = true;
+
+                                    relevanceScore += 35;
                                 }
 
 
@@ -73,7 +114,10 @@ public class SearchService {
                                                 .contains(word)) {
 
                                     matched = true;
+
+                                    relevanceScore += 40;
                                 }
+
 
                                 /*
                                  * Match merchant description
@@ -89,11 +133,13 @@ public class SearchService {
                                                 .contains(word)) {
 
                                     matched = true;
+
+                                    relevanceScore += 15;
                                 }
 
 
                                 /*
-                                 * Match category name
+                                 * Match category
                                  */
 
                                 if (!matched &&
@@ -104,6 +150,8 @@ public class SearchService {
                                                 .contains(word)) {
 
                                     matched = true;
+
+                                    relevanceScore += 20;
                                 }
 
 
@@ -120,27 +168,13 @@ public class SearchService {
                                                 .contains(word)) {
 
                                     matched = true;
+
+                                    relevanceScore += 15;
                                 }
 
 
                                 /*
                                  * Match card network
-                                 */
-
-                                if (!matched &&
-                                        offer.getCard() != null &&
-                                        offer.getCard()
-                                                .getNetwork()
-                                                .name()
-                                                .toLowerCase()
-                                                .contains(word)) {
-
-                                    matched = true;
-                                }
-
-
-                                /*
-                                 * Match reward type
                                  */
 
                                 if (!matched &&
@@ -154,7 +188,30 @@ public class SearchService {
                                                 .contains(word)) {
 
                                     matched = true;
+
+                                    relevanceScore += 15;
                                 }
+
+
+                                /*
+                                 * Match reward type
+                                 */
+
+                                if (!matched &&
+                                        offer.getCard() != null &&
+                                        offer.getCard()
+                                                .getRewardType() != null &&
+                                        offer.getCard()
+                                                .getRewardType()
+                                                .name()
+                                                .toLowerCase()
+                                                .contains(word)) {
+
+                                    matched = true;
+
+                                    relevanceScore += 20;
+                                }
+
 
                                 /*
                                  * Match benefit type
@@ -169,28 +226,28 @@ public class SearchService {
                                                 .contains(word)) {
 
                                     matched = true;
+
+                                    relevanceScore += 25;
                                 }
 
 
                                 /*
-                                 * If one keyword does not match,
+                                 * If keyword not matched,
                                  * reject this offer
                                  */
 
                                 if (!matched) {
 
-                                    return false;
+                                    return null;
                                 }
                             }
 
-                            return true;
-                        })
-
-                        .map(offer -> {
 
                             /*
-                             * Default values
-                             * Used when BenefitRule is null
+                             * Recommendation score
+                             *
+                             * Measures:
+                             * actual usefulness/value
                              */
 
                             int recommendationScore = 10;
@@ -203,8 +260,7 @@ public class SearchService {
 
 
                             /*
-                             * If BenefitRule exists,
-                             * calculate recommendation data
+                             * BenefitRule-based scoring
                              */
 
                             if (offer.getBenefitRule() != null) {
@@ -261,8 +317,16 @@ public class SearchService {
 
 
                             /*
-                             * Calculate estimated savings
-                             * only if amount is provided
+                             * Final intelligent ranking
+                             */
+
+                            int finalScore =
+                                    recommendationScore +
+                                            relevanceScore;
+
+
+                            /*
+                             * Estimated savings
                              */
 
                             Double estimatedSavings =
@@ -277,7 +341,7 @@ public class SearchService {
 
 
                             /*
-                             * Build final response
+                             * Build response
                              */
 
                             return SearchCardResponse
@@ -358,7 +422,7 @@ public class SearchService {
                                     )
 
                                     .recommendationScore(
-                                            recommendationScore
+                                            finalScore
                                     )
 
                                     .estimatedSavings(
@@ -369,7 +433,13 @@ public class SearchService {
                         })
 
                         /*
-                         * Sort best recommendations first
+                         * Remove rejected offers
+                         */
+
+                        .filter(response -> response != null)
+
+                        /*
+                         * Sort highest ranked first
                          */
 
                         .sorted(
@@ -383,7 +453,7 @@ public class SearchService {
 
 
         /*
-         * No search results found
+         * No results found
          */
 
         if (results.isEmpty()) {
@@ -395,7 +465,6 @@ public class SearchService {
 
         return results;
     }
-
 
     /*
      * Recommendation strength
