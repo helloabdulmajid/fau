@@ -1,5 +1,6 @@
 package in.abdulmajid.cardiq.card.controller;
 
+import in.abdulmajid.cardiq.card.dto.CardFilterRequest;
 import in.abdulmajid.cardiq.card.dto.CardResponse;
 import in.abdulmajid.cardiq.card.dto.CreateCardRequest;
 import in.abdulmajid.cardiq.card.service.CardService;
@@ -36,6 +37,18 @@ public class CardController {
                 .success(true)
                 .message("Cards fetched successfully")
                 .data(cardService.getAllCards())
+                .build();
+    }
+
+    @PostMapping("/filter")
+    public ApiResponse<List<CardResponse>> filterCards(
+            @RequestBody CardFilterRequest filter
+    ) {
+
+        return ApiResponse.<List<CardResponse>>builder()
+                .success(true)
+                .message("Filtered cards fetched successfully")
+                .data(cardService.filterCards(filter))
                 .build();
     }
 

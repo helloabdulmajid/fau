@@ -2,10 +2,12 @@ package in.abdulmajid.cardiq.card.service;
 
 import in.abdulmajid.cardiq.bank.entity.Bank;
 import in.abdulmajid.cardiq.bank.repository.BankRepository;
+import in.abdulmajid.cardiq.card.dto.CardFilterRequest;
 import in.abdulmajid.cardiq.card.dto.CardResponse;
 import in.abdulmajid.cardiq.card.dto.CreateCardRequest;
 import in.abdulmajid.cardiq.card.entity.Card;
 import in.abdulmajid.cardiq.card.repository.CardRepository;
+import in.abdulmajid.cardiq.card.specification.CardSpecification;
 import in.abdulmajid.cardiq.exception.DuplicateResourceException;
 import in.abdulmajid.cardiq.exception.ResourceNotFoundException;
 import in.abdulmajid.cardiq.offer.repository.OfferRepository;
@@ -49,6 +51,17 @@ public class CardService {
     public List<CardResponse> getAllCards() {
 
         return cardRepository.findAll()
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
+    public List<CardResponse> filterCards(
+            CardFilterRequest filter
+    ) {
+
+        return cardRepository.findAll(
+                        CardSpecification.filterCards(filter)
+                )
                 .stream()
                 .map(this::mapToResponse)
                 .toList();
