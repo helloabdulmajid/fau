@@ -20,13 +20,22 @@ public class SearchController {
 
     @GetMapping
     public ApiResponse<List<SearchCardResponse>> search(
-            @RequestParam String keyword
+
+            @RequestParam String keyword,
+
+            @RequestParam(required = false)
+            Double amount
     ) {
 
         return ApiResponse.<List<SearchCardResponse>>builder()
                 .success(true)
                 .message("Search results fetched successfully")
-                .data(searchService.search(keyword))
+                .data(
+                        searchService.search(
+                                keyword,
+                                amount
+                        )
+                )
                 .build();
     }
 }

@@ -35,7 +35,11 @@ public class SearchCardResponse {
     private Boolean limitedTimeOffer;
 
     private Integer priority;
-    private String benefitRuleName;
+    private String benefitType;
 
-    private BenefitType benefitType;
+    private Integer recommendationScore;
+    private String benefitRuleName;
+    private String benefitSummary;
+    private Double estimatedSavings;
+
 }

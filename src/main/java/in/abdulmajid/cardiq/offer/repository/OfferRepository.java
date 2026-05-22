@@ -21,14 +21,24 @@ public interface OfferRepository extends JpaRepository<Offer, Long> {
 //            String bank
 //    );
 
-    List<Offer>   findDistinctByTitleContainingIgnoreCaseOrMerchant_NameContainingIgnoreCaseOrCategory_NameContainingIgnoreCaseOrCard_NameContainingIgnoreCaseOrCard_Bank_NameContainingIgnoreCaseOrderByPriorityDescValueDesc
+//    List<Offer>   findDistinctByTitleContainingIgnoreCaseOrMerchant_NameContainingIgnoreCaseOrCategory_NameContainingIgnoreCaseOrCard_NameContainingIgnoreCaseOrCard_Bank_NameContainingIgnoreCaseOrderByPriorityDescValueDesc
+//            (
+//            String title,
+//            String merchant,
+//            String category,
+//            String card,
+//            String bank
+//    );
+
+    List<Offer>  findDistinctByTitleContainingIgnoreCaseOrMerchant_NameContainingIgnoreCaseOrCategory_NameContainingIgnoreCaseOrCard_NameContainingIgnoreCaseOrCard_Bank_NameContainingIgnoreCase
             (
-            String title,
-            String merchant,
-            String category,
-            String card,
-            String bank
-    );
+                    String title,
+                    String merchant,
+                    String category,
+                    String card,
+                    String bank
+            );
+
 
 
     boolean existsByCard_Id(Long cardId);
