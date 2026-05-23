@@ -54,5 +54,6 @@ public class SearchCardResponse {
     private Boolean fuzzyMatched;
 
     private String searchMessage;
+    private Boolean exactMatch;
 
 }

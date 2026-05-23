@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -84,10 +85,9 @@ public class SearchService {
                             List<String> suggestedKeywords =
                                     new ArrayList<>();
 
-                            boolean fuzzyMatched = false;
+                            boolean exactMatch = true;
 
-                            String searchMessage =
-                                    "Exact keyword match";
+
 
 
                             /*
@@ -96,9 +96,66 @@ public class SearchService {
                              * All keywords must match
                              * somewhere
                              */
+                            /*
+                             * Keyword normalization
+                             * and typo suggestions
+                             */
 
-                            for (String word : keywords)
+                            Map<String, String> normalizedKeywords =
+                                    Map.ofEntries(
+
+                                            Map.entry("travl", "travel"),
+                                            Map.entry("travels", "travel"),
+                                            Map.entry("traveling", "travel"),
+                                            Map.entry("travelling", "travel"),
+
+                                            Map.entry("amazn", "amazon"),
+                                            Map.entry("amzn", "amazon"),
+                                            Map.entry("flpkrt", "flipkart"),
+                                            Map.entry("flepkrt", "flipkart"),
+                                            Map.entry("flpcart", "flipkart"),
+
+                                            Map.entry("flipkrt", "flipkart"),
+                                            Map.entry("swigy", "swiggy"),
+                                            Map.entry("swegy", "swiggy"),
+                                            Map.entry("sweegy", "swiggy"),
+                                            Map.entry("suegy", "swiggy"),
+                                            Map.entry("eternal", "zomato"),
+                                            Map.entry("zomoto", "zomato"),
+                                            Map.entry("zoomat", "zomato"),
+
+                                            Map.entry("zomat", "zomato"),
+
+                                            Map.entry("foods", "food"),
+                                            Map.entry("fods", "food"),
+                                            Map.entry("fod", "food"),
+                                            Map.entry("shoping", "shopping"),
+                                            Map.entry("shooping", "shopping"),
+                                            Map.entry("swoping", "shopping"),
+                                            Map.entry("shoppingg", "shopping")
+                                    );
+
+                            for (String originalWord  : keywords)
                             {
+                                String word =
+                                        normalizedKeywords.getOrDefault(
+                                                originalWord,
+                                                originalWord
+                                        );
+
+                                /*
+                                 * Add suggestion
+                                 * only when corrected
+                                 */
+
+                                if (!word.equals(originalWord)) {
+                                    exactMatch = false;
+
+                                    if (!suggestedKeywords.contains(word)) {
+
+                                        suggestedKeywords.add(word);
+                                    }
+                                }
 
                                 boolean matched = false;
 
@@ -140,51 +197,6 @@ public class SearchService {
                                         relevanceScore += 40;
                                     }
 
-                                    /*
-                                     * Fuzzy merchant match
-                                     */
-
-                                    else {
-
-                                        for (String merchantWord :
-                                                merchantName.split("\\s+")) {
-
-                                            if (isSimilar(
-                                                    word,
-                                                    merchantWord
-                                            )) {
-
-                                                fuzzyMatched = true;
-
-                                                searchMessage =
-                                                        "Showing results similar to '" +
-                                                                offer.getMerchant()
-                                                                        .getName()
-                                                                + "'";
-
-                                                matched = true;
-
-                                                relevanceScore += 25;
-
-                                                /*
-                                                 * Avoid duplicate suggestions
-                                                 */
-
-                                                if (!suggestedKeywords.contains(
-                                                        offer.getMerchant()
-                                                                .getName()
-                                                )) {
-
-                                                    suggestedKeywords.add(
-                                                            offer.getMerchant()
-                                                                    .getName()
-                                                    );
-                                                }
-
-                                                break;
-                                            }
-                                        }
-                                    }
                                 }
 
                                 /*
@@ -427,8 +439,22 @@ public class SearchService {
                              */
 
                             double matchPercentage =
-                                    ((double) matchedKeywords.size()
-                                            / keywords.size()) * 100;
+                                    Math.round(
+                                            ((double) matchedKeywords.size()
+                                                    / keywords.size()) * 100
+                                    );
+
+                            String searchMessage = null;
+
+                            if (!suggestedKeywords.isEmpty()) {
+
+                                searchMessage =
+                                        "Showing results related to  " +
+                                                String.join(
+                                                        ", ",
+                                                        suggestedKeywords
+                                                );
+                            }
 
 
                             /*
@@ -560,13 +586,15 @@ public class SearchService {
                                     .suggestedKeywords(
                                             suggestedKeywords
                                     )
-                                    .fuzzyMatched(
-                                            fuzzyMatched
-                                    )
 
                                     .searchMessage(
                                             searchMessage
                                     )
+
+                                    .exactMatch(
+                                            exactMatch
+                                    )
+
 
                                     .build();
                         })
@@ -700,66 +728,5 @@ public class SearchService {
         };
     }
 
-    /*
-     * Simple typo similarity checker
-     */
-
-    private boolean isSimilar(
-            String input,
-            String target
-    ) {
-
-        /*
-         * Exact match
-         */
-
-        if (target.contains(input)) {
-
-            return true;
-        }
-
-
-        /*
-         * Small typo tolerance
-         */
-
-        int difference =
-                Math.abs(
-                        target.length()
-                                - input.length()
-                );
-
-        /*
-         * Reject very different words
-         */
-
-        if (difference > 2) {
-
-            return false;
-        }
-
-
-        /*
-         * Simple character matching
-         */
-
-        int matchedCharacters = 0;
-
-        for (char c : input.toCharArray()) {
-
-            if (target.indexOf(c) >= 0) {
-
-                matchedCharacters++;
-            }
-        }
-
-
-        /*
-         * Similar enough
-         */
-
-        return matchedCharacters >=
-                input.length() - 1;
-    }
 
 }
