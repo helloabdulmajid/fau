@@ -49,5 +49,10 @@ public class SearchCardResponse {
 
     private Integer matchedKeywordCount;
     private Double matchPercentage;
+    private List<String> suggestedKeywords;
+
+    private Boolean fuzzyMatched;
+
+    private String searchMessage;
 
 }

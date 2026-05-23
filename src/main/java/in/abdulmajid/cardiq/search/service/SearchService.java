@@ -81,6 +81,14 @@ public class SearchService {
                             List<String> unmatchedKeywords =
                                     new ArrayList<>();
 
+                            List<String> suggestedKeywords =
+                                    new ArrayList<>();
+
+                            boolean fuzzyMatched = false;
+
+                            String searchMessage =
+                                    "Exact keyword match";
+
 
                             /*
                              * Validate keyword matching
@@ -89,7 +97,8 @@ public class SearchService {
                              * somewhere
                              */
 
-                            for (String word : keywords) {
+                            for (String word : keywords)
+                            {
 
                                 boolean matched = false;
 
@@ -108,23 +117,75 @@ public class SearchService {
                                     relevanceScore += 35;
                                 }
 
-
                                 /*
                                  * Match merchant name
                                  */
 
                                 if (!matched &&
-                                        offer.getMerchant() != null &&
-                                        offer.getMerchant()
-                                                .getName()
-                                                .toLowerCase()
-                                                .contains(word)) {
+                                        offer.getMerchant() != null) {
 
-                                    matched = true;
+                                    String merchantName =
+                                            offer.getMerchant()
+                                                    .getName()
+                                                    .toLowerCase();
 
-                                    relevanceScore += 40;
+                                    /*
+                                     * Exact merchant match
+                                     */
+
+                                    if (merchantName.contains(word)) {
+
+                                        matched = true;
+
+                                        relevanceScore += 40;
+                                    }
+
+                                    /*
+                                     * Fuzzy merchant match
+                                     */
+
+                                    else {
+
+                                        for (String merchantWord :
+                                                merchantName.split("\\s+")) {
+
+                                            if (isSimilar(
+                                                    word,
+                                                    merchantWord
+                                            )) {
+
+                                                fuzzyMatched = true;
+
+                                                searchMessage =
+                                                        "Showing results similar to '" +
+                                                                offer.getMerchant()
+                                                                        .getName()
+                                                                + "'";
+
+                                                matched = true;
+
+                                                relevanceScore += 25;
+
+                                                /*
+                                                 * Avoid duplicate suggestions
+                                                 */
+
+                                                if (!suggestedKeywords.contains(
+                                                        offer.getMerchant()
+                                                                .getName()
+                                                )) {
+
+                                                    suggestedKeywords.add(
+                                                            offer.getMerchant()
+                                                                    .getName()
+                                                    );
+                                                }
+
+                                                break;
+                                            }
+                                        }
+                                    }
                                 }
-
 
                                 /*
                                  * Match merchant description
@@ -260,21 +321,24 @@ public class SearchService {
                                  */
                                 if (matched) {
 
-                                    matchedKeywords.add(word);
+                                    if (!matchedKeywords.contains(word)) {
+
+                                        matchedKeywords.add(word);
+                                    }
 
                                 } else {
 
-                                    unmatchedKeywords.add(word);
+                                    if (!unmatchedKeywords.contains(word)) {
+
+                                        unmatchedKeywords.add(word);
+                                    }
                                 }
 
-                                /*
-                                 * Reject weak matches
-                                 */
+                            }
 
-                                if (matchedKeywords.isEmpty()) {
+                            if (matchedKeywords.isEmpty()) {
 
-                                    return null;
-                                }
+                                return null;
                             }
 
 
@@ -493,6 +557,16 @@ public class SearchService {
                                     .matchPercentage(
                                             matchPercentage
                                     )
+                                    .suggestedKeywords(
+                                            suggestedKeywords
+                                    )
+                                    .fuzzyMatched(
+                                            fuzzyMatched
+                                    )
+
+                                    .searchMessage(
+                                            searchMessage
+                                    )
 
                                     .build();
                         })
@@ -625,4 +699,67 @@ public class SearchService {
                     "Card benefit available";
         };
     }
+
+    /*
+     * Simple typo similarity checker
+     */
+
+    private boolean isSimilar(
+            String input,
+            String target
+    ) {
+
+        /*
+         * Exact match
+         */
+
+        if (target.contains(input)) {
+
+            return true;
+        }
+
+
+        /*
+         * Small typo tolerance
+         */
+
+        int difference =
+                Math.abs(
+                        target.length()
+                                - input.length()
+                );
+
+        /*
+         * Reject very different words
+         */
+
+        if (difference > 2) {
+
+            return false;
+        }
+
+
+        /*
+         * Simple character matching
+         */
+
+        int matchedCharacters = 0;
+
+        for (char c : input.toCharArray()) {
+
+            if (target.indexOf(c) >= 0) {
+
+                matchedCharacters++;
+            }
+        }
+
+
+        /*
+         * Similar enough
+         */
+
+        return matchedCharacters >=
+                input.length() - 1;
+    }
+
 }
