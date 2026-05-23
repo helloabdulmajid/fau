@@ -358,6 +358,14 @@ public class SearchService {
                             relevanceScore +=
                                     matchedKeywords.size() * 15;
 
+                            /*
+                             * Calculate keyword match percentage
+                             */
+
+                            double matchPercentage =
+                                    ((double) matchedKeywords.size()
+                                            / keywords.size()) * 100;
+
 
                             /*
                              * Final intelligent ranking
@@ -481,6 +489,9 @@ public class SearchService {
 
                                     .matchedKeywordCount(
                                             matchedKeywords.size()
+                                    )
+                                    .matchPercentage(
+                                            matchPercentage
                                     )
 
                                     .build();

@@ -48,5 +48,6 @@ public class SearchCardResponse {
     private List<String> unmatchedKeywords;
 
     private Integer matchedKeywordCount;
+    private Double matchPercentage;
 
 }
