@@ -1,5 +1,6 @@
 package in.abdulmajid.cardiq.merchant.dto;
 
+import jakarta.persistence.Column;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -20,6 +21,9 @@ public class MerchantResponse {
     private String code;
 
     private String merchantType;
+
+    private String mccCode;
+
 
     // =========================================================
     // VISUAL DETAILS

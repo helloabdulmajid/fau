@@ -45,6 +45,14 @@ public class Merchant extends BaseEntity {
     private String merchantType;
 
     // =========================================================
+    // MCC stands for Merchant Category Code.
+    // =========================================================
+
+
+    @Column(name = "mcc_code", length = 4)
+    private String mccCode; // Stores the 4-digit card network code (e.g. "Zomato"="5812")
+
+    // =========================================================
     // VISUAL & WEBSITE DETAILS
     // =========================================================
 

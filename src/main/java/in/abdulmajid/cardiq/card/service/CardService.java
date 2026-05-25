@@ -358,6 +358,14 @@ public class CardService {
                 request.getMinimumIncomeRequired()
         );
 
+        // =========================================================
+        // Digital & Network Flags
+        // =========================================================
+
+        card.setUpiEnabled(request.getUpiEnabled());
+        card.setIsVirtualOnly(request.getIsVirtualOnly());
+        card.setRequiresPrimaryCard(request.getRequiresPrimaryCard());
+
         // -----------------------------------------------------
         // RELATIONS
         // -----------------------------------------------------
@@ -501,7 +509,16 @@ public class CardService {
                         card.getCoBrandPartner()
                 )
 
-                // -------------------------------------------------
+                  // =========================================================
+                  // Digital & Network Flags
+                  // =========================================================
+
+                .upiEnabled(card.getUpiEnabled())
+                .isVirtualOnly(card.getIsVirtualOnly())
+                .requiresPrimaryCard(card.getRequiresPrimaryCard())
+
+
+                 // -------------------------------------------------
                 // ELIGIBILITY
                 // -------------------------------------------------
 

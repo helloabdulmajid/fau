@@ -77,6 +77,7 @@ public class MerchantService {
         merchant.setWebsiteUrl(request.getWebsiteUrl());
 
         merchant.setDescription(request.getDescription());
+        merchant.setMccCode(request.getMccCode());
 
         merchant.setActive(
                 request.getActive() != null
@@ -162,6 +163,7 @@ public class MerchantService {
         merchant.setWebsiteUrl(request.getWebsiteUrl());
 
         merchant.setDescription(request.getDescription());
+        merchant.setMccCode(request.getMccCode());
 
         if (request.getActive() != null) {
             merchant.setActive(request.getActive());
@@ -233,6 +235,7 @@ public class MerchantService {
                 .websiteUrl(merchant.getWebsiteUrl())
                 .description(merchant.getDescription())
                 .active(merchant.getActive())
+                .mccCode(merchant.getMccCode())
                 .build();
     }
 }

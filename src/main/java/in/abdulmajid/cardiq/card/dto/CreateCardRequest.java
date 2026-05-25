@@ -151,6 +151,14 @@ public class CreateCardRequest {
     private Integer minimumIncomeRequired;
 
     // =========================================================
+    // Digital & Network Flags
+    // =========================================================
+
+    private Boolean upiEnabled = false;
+    private Boolean isVirtualOnly = false;
+    private Boolean requiresPrimaryCard = false;
+
+    // =========================================================
     // RELATIONS
     // =========================================================
 

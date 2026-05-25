@@ -1,5 +1,6 @@
 package in.abdulmajid.cardiq.merchant.dto;
 
+import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotBlank;
 
 import lombok.Getter;
@@ -25,6 +26,8 @@ public class CreateMerchantRequest {
     private String code;
 
     private String merchantType;
+
+    private String mccCode;
 
     private String logoUrl;
 

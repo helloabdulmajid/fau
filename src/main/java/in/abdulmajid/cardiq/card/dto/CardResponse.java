@@ -105,6 +105,15 @@ public class CardResponse {
     private String coBrandPartner;
 
     // =========================================================
+    // Digital & Network Flags
+    // =========================================================
+
+    private Boolean upiEnabled ;
+    private Boolean isVirtualOnly ;
+    private Boolean requiresPrimaryCard;
+
+
+    // =========================================================
     // ELIGIBILITY
     // =========================================================
 
