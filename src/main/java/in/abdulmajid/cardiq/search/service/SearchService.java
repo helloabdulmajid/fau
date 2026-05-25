@@ -658,10 +658,12 @@ public class SearchService {
     ) {
 
         return switch (benefitType) {
-            case REAL_CASHBACK->100;
+            case INSTANT_DISCOUNT->100;
+
 
             case STATEMENT_CREDIT -> 99;
 
+            case REAL_CASHBACK->98;
 
             case WALLET_BALANCE -> 95;
 
@@ -711,6 +713,11 @@ public class SearchService {
 
                     value +
                             " REAL_CASHBACK You Get to Your Card Limits";
+
+            case INSTANT_DISCOUNT ->
+
+                    value +
+                            " INSTANT_DISCOUNT You Get real-time point-of-sale or Online ";
 
             case STATEMENT_CREDIT ->
 

@@ -41,6 +41,13 @@ public class BenefitRuleResponse {
     private Integer minimumRedemptionPoints;
 
     // =========================================================
+    // REDEMPTION RULES
+    // =========================================================
+    private Integer redemptionMultiplierPoints;
+    // Example: Must be in multiples of 4000 points
+
+    private Double maxRedemptionValuePerMonth;
+    // =========================================================
     // EXPIRY RULES
     // =========================================================
 

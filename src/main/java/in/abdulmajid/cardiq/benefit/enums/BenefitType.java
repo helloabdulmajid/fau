@@ -11,5 +11,6 @@ public enum BenefitType {
     VOUCHER,
     CASHPOINTS,
     EDGE_REWARDS,
-    MILESTONE_REWARD
+    MILESTONE_REWARD,
+    INSTANT_DISCOUNT
 }

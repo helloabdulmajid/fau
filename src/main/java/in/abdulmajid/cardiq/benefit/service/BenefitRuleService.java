@@ -156,6 +156,9 @@ public class BenefitRuleService {
         rule.setExpiryApplicable(
                 request.getExpiryApplicable()
         );
+        rule.setRedemptionMultiplierPoints(request.getRedemptionMultiplierPoints());
+
+        rule.setMaxRedemptionValuePerMonth(request.getMaxRedemptionValuePerMonth());
 
         rule.setExpiryMonths(
                 request.getExpiryMonths()
@@ -190,6 +193,10 @@ public class BenefitRuleService {
                 .expiryApplicable(
                         rule.getExpiryApplicable()
                 )
+                .redemptionMultiplierPoints(rule.getRedemptionMultiplierPoints())
+
+                .maxRedemptionValuePerMonth(rule.getMaxRedemptionValuePerMonth())
+
                 .expiryMonths(
                         rule.getExpiryMonths()
                 )

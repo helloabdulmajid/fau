@@ -42,10 +42,8 @@ public class BenefitRule extends BaseEntity {
     // MINIMUM REDEMPTION RULE
     // =========================================================
 
-    // Example:
-    // Minimum 500 points required
-
     private Integer minimumRedemptionPoints;
+    // Example: Minimum 1000 points
 
     // =========================================================
     // EXPIRY RULES
@@ -61,15 +59,20 @@ public class BenefitRule extends BaseEntity {
     // reward points expire after 24 months
 
     private Integer expiryMonths;
+    // =========================================================
+    // REDEMPTION RULES
+    // =========================================================
+    private Integer redemptionMultiplierPoints;
+    // Example: Must be in multiples of 4000 points
 
+    private Double maxRedemptionValuePerMonth;
+    // Example: Max ₹3000 cashback per month
     // =========================================================
     // REDEMPTION FEES
     // =========================================================
 
-    // Example:
-    // ₹99 redemption fee
-
     private Double redemptionFee;
+    // Example: ₹99 redemption fee
 
     // =========================================================
     // EXTRA NOTES
