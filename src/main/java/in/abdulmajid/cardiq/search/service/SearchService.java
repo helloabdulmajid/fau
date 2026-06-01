@@ -215,6 +215,7 @@ public class SearchService {
                                                         .getName()
                                                         .toLowerCase()
                                                         .contains(word)
+
                                 ) {
 
                                     matched = true;
@@ -439,6 +440,9 @@ public class SearchService {
 
                                     .cardName(
                                             offer.getCard().getName()
+                                    )
+                                    .cardSlung(
+                                            offer.getCard().getSlug()
                                     )
 
                                     .bankName(

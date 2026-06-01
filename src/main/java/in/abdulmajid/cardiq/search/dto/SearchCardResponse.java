@@ -18,6 +18,8 @@ public class SearchCardResponse {
     // =========================================================
 
     private String cardName;
+    private String cardSlung;
+
 
     private String bankName;
 
