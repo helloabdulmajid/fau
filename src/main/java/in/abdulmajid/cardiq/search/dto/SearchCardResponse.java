@@ -16,7 +16,7 @@ public class SearchCardResponse {
     // =========================================================
     // CARD DETAILS
     // =========================================================
-
+    private Long id;
     private String cardName;
     private String cardSlung;
 

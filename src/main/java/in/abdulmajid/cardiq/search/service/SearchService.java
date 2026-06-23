@@ -437,6 +437,10 @@ public class SearchService {
                                     // -----------------------------
                                     // CARD DETAILS
                                     // -----------------------------
+                                    .id(offer.getCard().getId()
+                                    )
+
+
 
                                     .cardName(
                                             offer.getCard().getName()
