@@ -33,7 +33,7 @@ public class CardController {
 
         return ApiResponse.<CardResponse>builder()
                 .success(true)
-                .message("Card created successfully")
+                .message("Card created successfully d")
                 .data(
                         cardService.createCard(request)
                 )
