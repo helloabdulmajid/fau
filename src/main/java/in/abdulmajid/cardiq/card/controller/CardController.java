@@ -20,10 +20,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CardController {
 
-    // =========================================================
-    // SERVICES
-    // =========================================================
-
     private final CardService cardService;
 
     // =========================================================
@@ -92,6 +88,24 @@ public class CardController {
                 .message("Card fetched successfully")
                 .data(
                         cardService.getCardById(id)
+                )
+                .build();
+    }
+
+    // =========================================================
+    // GET SINGLE CARD BY SLUG
+    // =========================================================
+
+    @GetMapping("/slug/{slug}")
+    public ApiResponse<CardResponse> getCardBySlug(
+            @PathVariable String slug
+    ) {
+
+        return ApiResponse.<CardResponse>builder()
+                .success(true)
+                .message("Card fetched successfully")
+                .data(
+                        cardService.getCardBySlug(slug)
                 )
                 .build();
     }

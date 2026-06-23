@@ -28,5 +28,12 @@ public interface CardRepository
     // =========================================================
 
     boolean existsBySlug(String slug);
+   // Optional<Card> findBySlug(String slug);
+
+    // =========================================================
+    // FIND CARD BY SLUG
+    // =========================================================
     Optional<Card> findBySlug(String slug);
+
+
 }

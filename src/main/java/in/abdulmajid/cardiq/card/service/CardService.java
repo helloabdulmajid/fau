@@ -117,10 +117,25 @@ public class CardService {
         Card card = cardRepository.findById(id)
                 .orElseThrow(() ->
                         new ResourceNotFoundException(
+           "Card not found"
+                        )
+                );
+        return mapToResponse(card);
+
+    }
+
+    // =========================================================
+    // GET CARD BY SLUG
+    // =========================================================
+
+    public CardResponse getCardBySlug(String slug) {
+
+        Card card = cardRepository.findBySlug(slug)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
                                 "Card not found"
                         )
                 );
-
         return mapToResponse(card);
     }
 
@@ -528,4 +543,6 @@ public class CardService {
 
                 .build();
     }
+
+
 }
