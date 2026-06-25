@@ -16,7 +16,7 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addMapping("/**")
                 .allowedOrigins(
                         "http://localhost:5173",
-                        "https://cardiq-web-git-dev-abdulmajids-projects-c368503e.vercel.app/"
+                        "https://cardiq-tau.vercel.app/"
                 )
                 .allowedMethods("*")
                 .allowedHeaders("*");
