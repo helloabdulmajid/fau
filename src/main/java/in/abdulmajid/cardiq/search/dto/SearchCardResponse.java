@@ -1,6 +1,7 @@
 package in.abdulmajid.cardiq.search.dto;
 
 import in.abdulmajid.cardiq.benefit.enums.BenefitType;
+import in.abdulmajid.cardiq.card.enums.CardType;
 import in.abdulmajid.cardiq.card.enums.RewardType;
 import in.abdulmajid.cardiq.offer.enums.OfferPlatform;
 import in.abdulmajid.cardiq.offer.enums.OfferType;
@@ -18,7 +19,7 @@ public class SearchCardResponse {
     // =========================================================
     private Long id;
     private String cardName;
-    private String cardSlung;
+    private String cardSlug;
 
 
     private String bankName;
@@ -46,6 +47,8 @@ public class SearchCardResponse {
     private Integer internationalLoungeAccess;
 
     private String coBrandPartner;
+
+    private CardType cardType;
 
     // =========================================================
     // OFFER DETAILS
@@ -106,4 +109,6 @@ public class SearchCardResponse {
     private String searchMessage;
 
     private Boolean exactMatch;
+
+    private boolean owned;
 }

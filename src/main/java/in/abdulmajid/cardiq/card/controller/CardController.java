@@ -3,6 +3,7 @@ package in.abdulmajid.cardiq.card.controller;
 import in.abdulmajid.cardiq.card.dto.CardFilterRequest;
 import in.abdulmajid.cardiq.card.dto.CardResponse;
 import in.abdulmajid.cardiq.card.dto.CreateCardRequest;
+import in.abdulmajid.cardiq.card.dto.SimpleCardResponse;
 import in.abdulmajid.cardiq.card.service.CardService;
 
 import in.abdulmajid.cardiq.common.ApiResponse;
@@ -70,6 +71,23 @@ public class CardController {
                 .message("Filtered cards fetched successfully")
                 .data(
                         cardService.filterCards(filter)
+                )
+                .build();
+    }
+
+    // =========================================================
+    // SEARCH CARDS BY KEYWORD (NAME / BANK / TYPE)
+    // =========================================================
+
+    @GetMapping("/search")
+    public ApiResponse<List<SimpleCardResponse>> searchCards(
+            @RequestParam String q
+    ) {
+        return ApiResponse.<List<SimpleCardResponse>>builder()
+                .success(true)
+                .message("Cards searched successfully")
+                .data(
+                        cardService.searchCardsByKeyword(q)
                 )
                 .build();
     }

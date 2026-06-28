@@ -33,6 +33,7 @@ public class CardResponse {
     // =========================================================
 
     private String bankName;
+    private Long bankId;
 
     // =========================================================
     // CARD CLASSIFICATION

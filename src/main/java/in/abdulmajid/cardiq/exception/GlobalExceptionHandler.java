@@ -6,6 +6,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MultipartException;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,6 +31,36 @@ public class GlobalExceptionHandler {
                 .body(response);
     }
 
+    @ExceptionHandler(MissingServletRequestPartException.class)
+    public ResponseEntity<ApiResponse<Void>> handleMissingPart(
+            MissingServletRequestPartException ex
+    ) {
+        ApiResponse<Void> response = ApiResponse.<Void>builder()
+                .success(false)
+                .message("Missing part: " + ex.getRequestPartName())
+                .data(null)
+                .build();
+
+        return ResponseEntity
+                .badRequest()
+                .body(response);
+    }
+
+    @ExceptionHandler(MultipartException.class)
+    public ResponseEntity<ApiResponse<Void>> handleMultipart(
+            MultipartException ex
+    ) {
+        ApiResponse<Void> response = ApiResponse.<Void>builder()
+                .success(false)
+                .message("Upload error: " + ex.getMessage())
+                .data(null)
+                .build();
+
+        return ResponseEntity
+                .badRequest()
+                .body(response);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Void>> handleGenericException(
             Exception ex
@@ -36,7 +68,7 @@ public class GlobalExceptionHandler {
 
         ApiResponse<Void> response = ApiResponse.<Void>builder()
                 .success(false)
-                .message("Something went wrong")
+                .message("Something went wrong: " + ex.getMessage())
                 .data(null)
                 .build();
 

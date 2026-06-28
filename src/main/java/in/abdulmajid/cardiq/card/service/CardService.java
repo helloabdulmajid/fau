@@ -6,6 +6,7 @@ import in.abdulmajid.cardiq.bank.repository.BankRepository;
 import in.abdulmajid.cardiq.card.dto.CardFilterRequest;
 import in.abdulmajid.cardiq.card.dto.CardResponse;
 import in.abdulmajid.cardiq.card.dto.CreateCardRequest;
+import in.abdulmajid.cardiq.card.dto.SimpleCardResponse;
 
 import in.abdulmajid.cardiq.card.entity.Card;
 
@@ -13,6 +14,7 @@ import in.abdulmajid.cardiq.card.repository.CardRepository;
 
 import in.abdulmajid.cardiq.card.specification.CardSpecification;
 
+import in.abdulmajid.cardiq.cloudinary.CloudinaryService;
 import in.abdulmajid.cardiq.exception.DuplicateResourceException;
 import in.abdulmajid.cardiq.exception.ResourceNotFoundException;
 
@@ -33,6 +35,8 @@ public class CardService {
     private final CardRepository cardRepository;
 
     private final BankRepository bankRepository;
+
+    private final CloudinaryService cloudinaryService;
 
     // =========================================================
     // CREATE CARD
@@ -187,6 +191,12 @@ public class CardService {
                 );
 
         // -----------------------------------------------------
+        // DELETE OLD IMAGE IF REPLACED
+        // -----------------------------------------------------
+
+        String oldImageUrl = card.getImageUrl();
+
+        // -----------------------------------------------------
         // UPDATE CARD DATA
         // -----------------------------------------------------
 
@@ -197,6 +207,14 @@ public class CardService {
         // -----------------------------------------------------
 
         Card updatedCard = cardRepository.save(card);
+
+        // -----------------------------------------------------
+        // DELETE OLD IMAGE FROM CLOUDINARY
+        // -----------------------------------------------------
+
+        if (oldImageUrl != null && !oldImageUrl.equals(card.getImageUrl())) {
+            cloudinaryService.deleteImage(oldImageUrl);
+        }
 
         // -----------------------------------------------------
         // RETURN RESPONSE
@@ -221,6 +239,12 @@ public class CardService {
                                 "Card not found"
                         )
                 );
+
+        // -----------------------------------------------------
+        // DELETE CARD IMAGE FROM CLOUDINARY
+        // -----------------------------------------------------
+
+        cloudinaryService.deleteImage(card.getImageUrl());
 
         // -----------------------------------------------------
         // DELETE CARD
@@ -425,6 +449,11 @@ public class CardService {
                                 ? card.getBank().getName()
                                 : null
                 )
+                .bankId(
+                        card.getBank() != null
+                                ? card.getBank().getId()
+                                : null
+                )
 
                 // -------------------------------------------------
                 // CARD CLASSIFICATION
@@ -541,6 +570,38 @@ public class CardService {
                         card.getMinimumIncomeRequired()
                 )
 
+                .build();
+    }
+
+    // =========================================================
+    // SEARCH CARDS BY KEYWORD (NAME / BANK / TYPE)
+    // =========================================================
+
+    public List<SimpleCardResponse> searchCardsByKeyword(String keyword) {
+        String normalized = keyword.trim().toLowerCase()
+                .replace("american express", "amex")
+                .replace("master card", "mastercard");
+        return cardRepository.searchByKeyword(normalized).stream()
+                .map(this::mapToSimpleResponse)
+                .toList();
+    }
+
+    // =========================================================
+    // MAP ENTITY TO SIMPLE RESPONSE DTO
+    // =========================================================
+
+    private SimpleCardResponse mapToSimpleResponse(Card card) {
+        return SimpleCardResponse.builder()
+                .id(card.getId())
+                .cardName(card.getName())
+                .bankName(
+                        card.getBank() != null
+                                ? card.getBank().getName()
+                                : null
+                )
+                .imageUrl(card.getImageUrl())
+                .cardType(card.getCardType())
+                .network(card.getNetwork())
                 .build();
     }
 
